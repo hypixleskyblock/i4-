@@ -1,360 +1,623 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>F7 Goldor - Fourth Dev Simulator</title>
+<title>Goldor Phase 3 - Terminal Rush</title>
 <style>
 *{box-sizing:border-box}
 body{
-  margin:0;background:#080b12;color:#f1f5f9;
-  font-family:Arial,Helvetica,sans-serif;text-align:center;
+  margin:0;background:#050811;color:#eaf3ff;
+  font-family:Arial,Helvetica,sans-serif;overflow:hidden
 }
-header{padding:15px;background:#141b2b;border-bottom:2px solid #d6a928}
-h1{margin:5px;color:#ffd75e;font-size:clamp(22px,4vw,36px)}
-.subtitle{color:#aab6cb;font-size:13px}
-#game{
-  max-width:1000px;margin:18px auto;padding:12px;
+canvas{display:block;width:100vw;height:100vh}
+#hud{position:fixed;inset:0;pointer-events:none}
+.panel{
+  background:rgba(7,13,27,.88);border:1px solid #304663;
+  border-radius:12px;padding:12px 16px;backdrop-filter:blur(8px)
 }
-.hud{
- display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:12px
-}
-.stat{
- background:#151d2d;border:1px solid #35425a;border-radius:8px;
- padding:10px 14px;min-width:120px;font-size:13px
-}
-.stat strong{display:block;color:#ffdc69;font-size:18px;margin-top:4px}
-#arena{
- position:relative;overflow:hidden;border:2px solid #46536a;border-radius:12px;
- background:linear-gradient(#182438 0%,#111827 64%,#282c39 64%,#151923 100%);
- height:390px;
-}
-#arena:before{
- content:"";position:absolute;inset:0;
- background:repeating-linear-gradient(90deg,transparent 0 79px,#ffffff08 80px),
- repeating-linear-gradient(0deg,transparent 0 59px,#ffffff08 60px);
- pointer-events:none
-}
-#timer{
- position:absolute;top:12px;left:50%;transform:translateX(-50%);
- z-index:3;background:#101522dd;border:2px solid #ffd75e;
- border-radius:9px;padding:7px 20px;font-size:27px;font-weight:bold;color:#ffd75e
-}
-#timer.danger{color:#ff5555;border-color:#ff5555;animation:pulse .3s infinite alternate}
-@keyframes pulse{to{transform:translateX(-50%) scale(1.08)}}
-#goldor{
- position:absolute;right:12%;top:92px;width:150px;height:190px;
- font-size:105px;filter:drop-shadow(0 0 14px #f04444);
- transition:filter .1s;z-index:2
-}
-#goldor.hit{filter:drop-shadow(0 0 30px #fff) brightness(2)}
-#goldorLabel{font-size:13px;color:#ff8888;font-weight:bold}
-#bossBar{position:absolute;right:8%;top:58px;width:42%;height:13px;background:#451d27;border:1px solid #ff7272;border-radius:10px;overflow:hidden}
-#bossHP{height:100%;width:100%;background:linear-gradient(90deg,#ff3434,#ff8585);transition:width .12s}
-#player{
- position:absolute;left:17%;bottom:55px;font-size:60px;z-index:2;
- transition:left .15s;filter:drop-shadow(0 0 8px #60a5fa)
-}
-#plate{
- position:absolute;left:10%;bottom:29px;width:105px;height:19px;
- background:#22d3ee;border:3px solid #a5f3fc;border-radius:4px;
- box-shadow:0 0 20px #22d3ee;z-index:1
-}
-#plateLabel{position:absolute;left:7%;bottom:5px;font-size:11px;color:#a5f3fc}
-#projectiles{position:absolute;inset:0;pointer-events:none;z-index:4}
-.arrow{position:absolute;font-size:28px;transition:none}
-.tick{
- position:absolute;left:50%;top:47%;font-size:44px;color:#ff3e53;
- animation:tick .5s forwards;z-index:5
-}
-@keyframes tick{to{transform:translateY(-65px);opacity:0}}
-#effects{position:absolute;inset:0;pointer-events:none;z-index:6}
-#message{
- position:absolute;left:50%;bottom:12px;transform:translateX(-50%);
- background:#0b1020dd;border:1px solid #718096;border-radius:8px;
- padding:8px 12px;font-size:13px;white-space:nowrap;max-width:95%
-}
-#overlay{
- position:absolute;inset:0;background:#060913eF;z-index:10;
- display:flex;align-items:center;justify-content:center;padding:20px
-}
-#overlay.hidden{display:none}
-.panel{max-width:490px}
-.panel h2{font-size:32px;color:#ffd75e}
-.panel p{line-height:1.6;color:#d0d9e8}
-button{
- background:#d9a928;color:#171717;border:0;border-radius:8px;
- padding:13px 18px;font-weight:bold;font-size:15px;cursor:pointer;margin:5px
-}
-button:hover{background:#ffe080}
-button:disabled{opacity:.4;cursor:not-allowed}
-#controls{
- display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:12px 0
-}
-.action{background:#26364e;color:white;border:1px solid #4c6385}
-.action:active{transform:scale(.96)}
-#healthWrap{height:17px;background:#3d1721;border-radius:8px;overflow:hidden;margin:10px auto;max-width:500px}
-#health{height:100%;width:100%;background:#28cf7a;transition:width .15s}
-#healthText{font-size:12px;color:#b6c3d8}
-#gear{display:flex;justify-content:center;gap:7px;flex-wrap:wrap;margin:12px}
-.gear{
- padding:8px 10px;background:#151d2d;border:1px solid #394761;
- border-radius:7px;font-size:12px
-}
-.ready{color:#6ee7a1}.used{color:#ff7979}
-#log{font-size:12px;color:#aab6cb;min-height:18px}
-footer{color:#65738a;font-size:11px;padding:18px}
+#top{position:absolute;top:15px;left:15px;right:15px;
+display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+#title{font-size:22px;font-weight:900;color:#ffbd52}
+.small{font-size:12px;color:#9bb1d1;margin-top:5px}
+#boss{width:210px}
+#bossbar{height:9px;background:#202b40;border-radius:8px;overflow:hidden;margin-top:8px}
+#bossfill{height:100%;width:100%;background:#ef4545;transition:width .2s}
+#sections{position:absolute;top:100px;left:50%;transform:translateX(-50%);
+display:flex;gap:7px}
+.seg{padding:8px 13px;border-radius:7px;background:#111b2d;
+border:1px solid #293a54;font-weight:bold;color:#8095b6}
+.seg.active{background:#163451;color:#6be8ff;border-color:#42c9f2}
+.seg.done{background:#173b2b;color:#68f5a1;border-color:#29995b}
+#objective{position:absolute;top:155px;left:50%;transform:translateX(-50%);
+text-align:center;width:min(90%,500px);font-size:15px;text-shadow:0 2px 5px #000}
+#bottom{position:absolute;bottom:18px;left:18px;right:18px;
+display:flex;justify-content:space-between;align-items:end;gap:12px}
+#controls{font-size:12px;line-height:1.9}
+.key{display:inline-block;background:#202e44;border:1px solid #536b8b;
+padding:2px 6px;border-radius:4px;color:white;font-weight:bold}
+#interaction{position:absolute;left:50%;top:60%;transform:translate(-50%,-50%);
+display:none;text-align:center;background:#081526ee;border:1px solid #43d9ff;
+padding:15px 24px;border-radius:12px;font-weight:bold}
+#interactBtn{pointer-events:auto;background:#1cbbd6;color:#04121c;
+border:0;padding:10px 18px;border-radius:7px;font-weight:bold;cursor:pointer}
+#pre4{pointer-events:auto;background:#9b49ff;color:white;border:0;
+padding:10px 14px;border-radius:7px;font-weight:bold;cursor:pointer}
+#overlay{position:fixed;inset:0;background:#030711eF;display:flex;
+align-items:center;justify-content:center;padding:18px;z-index:5}
+#card{width:min(580px,100%);background:#101a2d;border:1px solid #405776;
+border-radius:18px;padding:27px;box-shadow:0 0 65px #1b75b844}
+h1{margin:0 0 12px;color:#ffbd52;font-size:34px}
+h2{color:#68e5ff;margin-top:0}
+p{color:#bacbe4;line-height:1.6}
+.primary{background:#ffb943;color:#171006;border:0;padding:13px 20px;
+border-radius:8px;font-weight:900;font-size:16px;cursor:pointer}
+.secondary{background:#23334e;color:white;border:1px solid #49617f;
+padding:10px 15px;border-radius:8px;cursor:pointer}
+#puzzleButtons{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:20px 0}
+.choice{font-size:27px;background:#1a2940;border:1px solid #405776;
+border-radius:10px;padding:16px 3px;cursor:pointer;color:white}
+.choice:hover{background:#285173}
+#puzzleStatus{min-height:24px;color:#ffce6b}
+#puzzleModal{position:fixed;inset:0;background:#020610dd;z-index:6;
+display:none;align-items:center;justify-content:center;padding:15px}
+#puzzleCard{width:min(490px,100%);background:#101b30;border:1px solid #43d9ff;
+border-radius:15px;padding:24px;text-align:center}
+#sequence{font-size:32px;letter-spacing:8px;padding:15px;color:#ffe09a;
+background:#080f1e;border-radius:8px}
+#toast{position:absolute;top:215px;left:50%;transform:translateX(-50%);
+color:#fff;background:#182842;padding:9px 15px;border-radius:8px;
+opacity:0;transition:opacity .2s;text-align:center}
+#toast.show{opacity:1}
 @media(max-width:600px){
- #arena{height:340px}
- #goldor{right:5%;font-size:80px;width:100px;top:110px}
- #bossBar{right:5%;width:42%}
- #player{left:12%;font-size:48px}
- #plate{left:8%;width:80px}
- .stat{min-width:95px;padding:8px}
+ #title{font-size:17px}#boss{width:145px}
+ #sections{top:94px}.seg{padding:7px 9px;font-size:12px}
+ #objective{top:143px;font-size:13px}
+ #bottom{align-items:end}#controls{max-width:68%}
+ #puzzleButtons{grid-template-columns:repeat(2,1fr)}
 }
 </style>
 </head>
 <body>
-<header>
- <h1>⚔ F7 GOLDOR: FOURTH DEV</h1>
- <div class="subtitle">Master Mode • Terminal Challenge • Juju Shortbow Simulator</div>
-</header>
+<canvas id="game"></canvas>
 
-<div id="game">
- <div class="hud">
-  <div class="stat">TIME LEFT<strong id="hudTime">9.00s</strong></div>
-  <div class="stat">DEVICE<strong id="deviceState">INACTIVE</strong></div>
-  <div class="stat">DEATH TICKS<strong id="tickCount">0</strong></div>
- </div>
-
- <div id="healthWrap"><div id="health"></div></div>
- <div id="healthText">❤ Health: 100 / 100</div>
-
- <div id="gear">
-  <div class="gear">🎭 Bonzo Mask: <span id="bonzo" class="ready">READY</span></div>
-  <div class="gear">👻 Spirit Mask: <span id="spirit" class="ready">READY</span></div>
-  <div class="gear">🐦 Phoenix Lv. 100: <span id="phoenix" class="ready">READY</span></div>
- </div>
-
- <div id="arena">
-  <div id="timer">9.00</div>
-  <div id="bossBar"><div id="bossHP"></div></div>
-  <div id="goldor">🤖<div id="goldorLabel">GOLDOR • FOURTH DEV</div></div>
-  <div id="plate"></div>
-  <div id="plateLabel">PRESSURE PLATE</div>
-  <div id="player">🧙</div>
-  <div id="projectiles"></div>
-  <div id="effects"></div>
-  <div id="message">Step on the pressure plate to begin!</div>
-
-  <div id="overlay">
-   <div class="panel">
-    <h2>THE FOURTH DEVICE</h2>
-    <p>
-     Goldor's death ticks are lethal. Stand on the pressure plate,
-     activate the fourth device, and destroy Goldor with your Juju Shortbow.
-     <br><br>
-     You have <b>exactly 9 seconds</b>. Your Bonzo Mask, Spirit Mask,
-     and Level 100 Phoenix Pet can each save you once.
-    </p>
-    <button id="startBtn">ENTER THE BOSS ROOM</button>
-   </div>
+<div id="hud">
+  <div id="top">
+    <div class="panel">
+      <div id="title">⚙ GOLDOR PROTOCOL</div>
+      <div class="small">PHASE 3 · TERMINAL RUSH</div>
+      <div class="small" id="timer">TIME 00:00</div>
+    </div>
+    <div class="panel" id="boss">
+      <b style="color:#ff6262">☠ GOLDOR PURSUIT</b>
+      <div id="bossbar"><div id="bossfill"></div></div>
+      <div class="small" id="bossText">DISTANCE: 100%</div>
+    </div>
   </div>
- </div>
 
- <div id="controls">
-  <button id="shootBtn">🏹 SHOOT JUJU</button>
-  <button id="abilityBtn" class="action">⚡ RAPID FIRE</button>
-  <button id="restartBtn" class="action">↻ RESTART</button>
- </div>
- <div id="log">Tip: Keep firing. Rapid Fire temporarily increases your attack speed.</div>
+  <div id="sections">
+    <div class="seg active" id="s0">S1</div>
+    <div class="seg" id="s1">S2</div>
+    <div class="seg" id="s2">S3</div>
+    <div class="seg" id="s3">S4</div>
+  </div>
+
+  <div id="objective">Find the terminal and unlock the next gate.</div>
+  <div id="toast"></div>
+
+  <div id="interaction">
+    <div id="interactionText">TERMINAL DETECTED</div>
+    <div style="margin-top:10px">
+      <button id="interactBtn">E — INTERACT</button>
+    </div>
+  </div>
+
+  <div id="bottom">
+    <div class="panel" id="controls">
+      <b>CONTROLS</b><br>
+      <span class="key">W</span> Forward
+      <span class="key">S</span> Backward<br>
+      <span class="key">A</span> Left
+      <span class="key">D</span> Right<br>
+      <span class="key">E</span> Use terminal
+      <span class="key">SHIFT</span> Sprint
+    </div>
+    <div class="panel" style="text-align:right">
+      <b id="progressText">SECTION 1 / 4</b>
+      <div class="small" id="gateText">GATE LOCKED</div>
+      <button id="pre4" style="margin-top:8px">⚡ PRE4 SHORTCUT</button>
+    </div>
+  </div>
 </div>
 
-<footer>Fan-made browser game inspired by Hypixel SkyBlock. Not affiliated with Hypixel.</footer>
+<div id="overlay">
+  <div id="card">
+    <h1>GOLDOR: PHASE 3</h1>
+    <p>
+      Enter the massive fortress corridor. Goldor is closing in.
+      Clear the terminals in S1, S2, and S3, then solve the final
+      Arrows Device in S4 before he catches you.
+    </p>
+    <p>
+      <b style="color:#6be5ff">WASD</b> to move.
+      <b style="color:#6be5ff">E</b> to interact.
+      <b style="color:#6be5ff">SHIFT</b> to sprint.
+    </p>
+    <p>
+      <b style="color:#c39bff">Pre4:</b> Attempt a risky shortcut straight
+      to S4. It costs time and brings Goldor closer, but skips the first
+      three terminals.
+    </p>
+    <button class="primary" id="startBtn">ENTER PHASE 3</button>
+  </div>
+</div>
+
+<div id="puzzleModal">
+  <div id="puzzleCard">
+    <h2 id="puzzleTitle">TERMINAL</h2>
+    <p id="puzzleInstructions">Repeat the correct sequence.</p>
+    <div id="sequence">◆ ● ▲ ■</div>
+    <div id="puzzleButtons"></div>
+    <div id="puzzleStatus">Select the symbols in the correct order.</div>
+    <button class="secondary" id="closePuzzle">CLOSE TERMINAL</button>
+  </div>
+</div>
 
 <script>
 (() => {
+"use strict";
+
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
 const $ = id => document.getElementById(id);
 
-let running = false, finished = false;
-let timeLeft = 9, lastFrame = 0, lastShot = 0, lastTick = 0;
-let hp = 100, bossHP = 100, ticks = 0;
-let bonzoReady = true, spiritReady = true, phoenixReady = true;
-let rapidUntil = 0, rapidCooldown = 0, raf = 0;
-let shots = 0, startTime = 0;
+let W = 0, H = 0;
+function resize() {
+  W = canvas.width = innerWidth * devicePixelRatio;
+  H = canvas.height = innerHeight * devicePixelRatio;
+  ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+  W = innerWidth; H = innerHeight;
+}
+addEventListener("resize", resize);
+resize();
+
+const keys = {};
+const symbols = ["◆","●","▲","■"];
+const arrows = ["↑","↓","←","→"];
+
+let running = false;
+let gameOver = false;
+let victory = false;
+let startTime = 0;
+let elapsed = 0;
+let lastFrame = 0;
+let playerX = 0;
+let progress = 0.02;
+let bossProgress = -0.2;
+let section = 0;
+let unlocked = [false,false,false,false];
+let completed = [false,false,false,false];
+let puzzleOpen = false;
+let puzzleAnswer = [];
+let puzzleInput = [];
+let puzzleTarget = [];
+let puzzleKind = "terminal";
+let toastTimer = 0;
+let cameraShake = 0;
+let shortcutUsed = false;
+let gateFlash = 0;
+
+function message(text) {
+  $("toast").textContent = text;
+  $("toast").classList.add("show");
+  toastTimer = 2.5;
+}
+
+function formatTime(t) {
+  const m = Math.floor(t/60).toString().padStart(2,"0");
+  const s = Math.floor(t%60).toString().padStart(2,"0");
+  return m + ":" + s;
+}
 
 function updateHUD() {
-  $("hudTime").textContent = Math.max(0,timeLeft).toFixed(2)+"s";
-  $("timer").textContent = Math.max(0,timeLeft).toFixed(2);
-  $("timer").classList.toggle("danger",timeLeft <= 3 && running);
-  $("deviceState").textContent = running ? "ACTIVE" : finished ? "COMPLETE" : "INACTIVE";
-  $("tickCount").textContent = ticks;
-  $("health").style.width = Math.max(0,hp)+"%";
-  $("healthText").textContent = "❤ Health: "+Math.max(0,Math.ceil(hp))+" / 100";
-  $("bossHP").style.width = Math.max(0,bossHP)+"%";
-  $("bonzo").textContent = bonzoReady ? "READY" : "USED";
-  $("bonzo").className = bonzoReady ? "ready" : "used";
-  $("spirit").textContent = spiritReady ? "READY" : "USED";
-  $("spirit").className = spiritReady ? "ready" : "used";
-  $("phoenix").textContent = phoenixReady ? "READY" : "USED";
-  $("phoenix").className = phoenixReady ? "ready" : "used";
-  $("shootBtn").disabled = !running;
-  $("abilityBtn").disabled = !running || performance.now()<rapidCooldown;
-}
+  $("timer").textContent = "TIME " + formatTime(elapsed);
+  const distance = Math.max(0, Math.min(100, (bossProgress-progress+1.1)/1.1*100));
+  $("bossfill").style.width = distance + "%";
+  $("bossText").textContent = "DISTANCE: " + Math.round(distance) + "%";
+  $("progressText").textContent = "SECTION " + (section+1) + " / 4";
+  $("gateText").textContent = completed[section] ?
+    "GATE OPEN" : "GATE LOCKED";
+  $("objective").textContent = completed[section] ?
+    (section === 3 ? "Arrows Device complete!" : "Gate unlocked! Move forward.") :
+    (section === 3 ? "Find the final Arrows Device." : "Find and solve the terminal.");
+  for(let i=0;i<4;i++){
+    $("s"+i).className = "seg" + (i===section?" active":"") +
+      (completed[i]?" done":"");
+  }
 
-function message(text) { $("message").textContent=text; }
+  const nearTerminal = !completed[section] &&
+    progress >= section + 0.35 && progress <= section + 0.9 &&
+    Math.abs(playerX) < 0.92;
+  $("interaction").style.display =
+    running && !puzzleOpen && nearTerminal ? "block":"none";
+  $("interactionText").textContent = section === 3 ?
+    "FINAL ARROWS DEVICE DETECTED" : "TERMINAL DETECTED";
+  $("pre4").style.display =
+    running && !shortcutUsed && section===0 ? "block":"none";
+}
 
 function startGame() {
-  cancelAnimationFrame(raf);
-  running=true; finished=false; timeLeft=9; hp=100; bossHP=100;
-  ticks=0; shots=0; lastShot=0; lastTick=0;
-  bonzoReady=spiritReady=phoenixReady=true;
-  rapidUntil=0; rapidCooldown=0; startTime=performance.now();
-  $("overlay").classList.add("hidden");
-  $("projectiles").innerHTML="";
-  $("effects").innerHTML="";
-  $("goldor").style.opacity="1";
-  $("goldor").style.transform="";
-  $("player").style.left="17%";
-  message("FOURTH DEV ACTIVE! SHOOT GOLDOR!");
-  $("log").textContent="The death ticks have started. Keep shooting!";
-  updateHUD();
-  lastFrame=performance.now();
-  raf=requestAnimationFrame(loop);
+  $("overlay").style.display = "none";
+  running = true;
+  gameOver = false;
+  victory = false;
+  startTime = performance.now();
+  lastFrame = startTime;
+  requestAnimationFrame(loop);
 }
 
-function damagePlayer(amount) {
-  if (!running) return;
-  hp -= amount;
-  spawnTick();
-  if (hp <= 0) {
-    if (bonzoReady) {
-      bonzoReady=false; hp=50;
-      $("log").textContent="BONZO MASK activated! You survived a lethal hit.";
-    } else if (spiritReady) {
-      spiritReady=false; hp=50;
-      $("log").textContent="SPIRIT MASK activated! You survived a lethal hit.";
-    } else if (phoenixReady) {
-      phoenixReady=false; hp=100;
-      $("log").textContent="PHOENIX PET activated! Second wind!";
-    } else {
-      hp=0; updateHUD(); endGame(false,"THE DEATH TICKS GOT YOU");
-      return;
+$("startBtn").onclick = startGame;
+
+function startPuzzle() {
+  if (!running || puzzleOpen || completed[section]) return;
+  if (progress < section+0.35 || progress > section+0.9 ||
+      Math.abs(playerX)>0.92) {
+    message("Move closer to the terminal!");
+    return;
+  }
+
+  puzzleOpen = true;
+  puzzleInput = [];
+  puzzleTarget = [];
+
+  const isFinal = section===3;
+  puzzleKind = isFinal ? "arrows":"terminal";
+  const count = isFinal ? 5 : 4 + Math.min(section,1);
+
+  for(let i=0;i<count;i++){
+    puzzleTarget.push(Math.floor(Math.random()*(isFinal?4:4)));
+  }
+
+  $("puzzleTitle").textContent = isFinal ?
+    "⚡ ARROWS DEVICE" : "◈ TERMINAL S"+(section+1);
+
+  $("puzzleInstructions").textContent = isFinal ?
+    "Enter the arrow sequence in the exact order to disable Goldor's final gate." :
+    "Memorize the symbols, then repeat the sequence in the correct order.";
+
+  const labels = isFinal ? arrows : symbols;
+  $("sequence").textContent = puzzleTarget.map(n=>labels[n]).join("  ");
+  $("puzzleStatus").textContent = "Sequence displayed. Click the symbols in order.";
+  $("puzzleButtons").innerHTML = "";
+
+  labels.forEach((label,i)=>{
+    const btn = document.createElement("button");
+    btn.className = "choice";
+    btn.textContent = label;
+    btn.setAttribute("aria-label","Choose "+label);
+    btn.onclick = () => chooseSymbol(i);
+    $("puzzleButtons").appendChild(btn);
+  });
+
+  $("puzzleModal").style.display = "flex";
+  updateHUD();
+}
+
+function chooseSymbol(i) {
+  if(!puzzleOpen) return;
+  puzzleInput.push(i);
+
+  const index = puzzleInput.length-1;
+  if(puzzleInput[index] !== puzzleTarget[index]){
+    $("puzzleStatus").textContent = "Incorrect! Resetting sequence...";
+    $("puzzleStatus").style.color = "#ff6969";
+    puzzleInput = [];
+    cameraShake = 0.25;
+    return;
+  }
+
+  $("puzzleStatus").style.color = "#6ef5aa";
+  $("puzzleStatus").textContent =
+    "Correct: " + puzzleInput.length + " / " + puzzleTarget.length;
+
+  if(puzzleInput.length === puzzleTarget.length){
+    completed[section] = true;
+    unlocked[section] = true;
+    puzzleOpen = false;
+    $("puzzleModal").style.display = "none";
+    gateFlash = 1;
+    message(section===3 ? "ARROWS DEVICE COMPLETE! GOLDOR DEFEATED!" :
+      "TERMINAL COMPLETE! GATE UNLOCKED!");
+    if(section===3){
+      victory = true;
+      running = false;
+      setTimeout(showVictory,700);
+    }
+    updateHUD();
+  }
+}
+
+function closePuzzle() {
+  puzzleOpen = false;
+  $("puzzleModal").style.display = "none";
+  updateHUD();
+}
+$("closePuzzle").onclick = closePuzzle;
+$("interactBtn").onclick = startPuzzle;
+
+function doPre4() {
+  if(!running || shortcutUsed || section!==0) return;
+  shortcutUsed = true;
+  section = 3;
+  progress = 3.43;
+  playerX = 0;
+  bossProgress += 0.65;
+  elapsed += 4;
+  message("PRE4 SUCCESS! You reached S4 — Goldor is closer!");
+  updateHUD();
+}
+$("pre4").onclick = doPre4;
+
+function showVictory() {
+  $("overlay").style.display = "flex";
+  $("card").innerHTML = `
+    <h1 style="color:#6ef5aa">PHASE CLEARED!</h1>
+    <p>You disabled the Arrows Device and defeated Goldor.</p>
+    <p><b>Completion time:</b> ${formatTime(elapsed)}</p>
+    <p><b>Route:</b> ${shortcutUsed ? "Pre4 / Instant Section 4" : "Standard route"}</p>
+    <button class="primary" id="restart">PLAY AGAIN</button>`;
+  $("restart").onclick = () => location.reload();
+}
+
+function showDefeat() {
+  running = false;
+  gameOver = true;
+  $("overlay").style.display = "flex";
+  $("card").innerHTML = `
+    <h1 style="color:#ff6666">GOLDOR CAUGHT YOU!</h1>
+    <p>The boss reached you before you could finish the phase.</p>
+    <p><b>Time survived:</b> ${formatTime(elapsed)}</p>
+    <p>Move faster, sprint between terminals, and try Pre4 for a different route.</p>
+    <button class="primary" id="restart">RETRY PHASE 3</button>`;
+  $("restart").onclick = () => location.reload();
+}
+
+addEventListener("keydown", e=>{
+  const k = e.key.toLowerCase();
+  if(["w","a","s","d","shift","arrowup","arrowdown","arrowleft","arrowright"," "].includes(k))
+    e.preventDefault();
+  keys[k] = true;
+  if(k==="e" && !e.repeat) {
+    if(puzzleOpen) return;
+    startPuzzle();
+  }
+  if(k==="escape" && puzzleOpen) closePuzzle();
+});
+addEventListener("keyup", e=>keys[e.key.toLowerCase()]=false);
+addEventListener("blur",()=>Object.keys(keys).forEach(k=>keys[k]=false));
+
+function update(dt) {
+  if(!running || puzzleOpen) return;
+
+  elapsed += dt;
+  const sprint = keys.shift ? 1.65 : 1;
+  const speed = 0.30*sprint;
+
+  if(keys.w || keys.arrowup) progress += speed*dt;
+  if(keys.s || keys.arrowdown) progress -= speed*dt;
+  if(keys.a || keys.arrowleft) playerX -= 1.7*dt;
+  if(keys.d || keys.arrowright) playerX += 1.7*dt;
+
+  playerX = Math.max(-1.65,Math.min(1.65,playerX));
+  progress = Math.max(0,Math.min(3.98,progress));
+
+  // Gates prevent entering the next section until its terminal is solved.
+  if(section<3 && progress>section+0.99 && !completed[section]){
+    progress=section+0.99;
+  }
+
+  if(completed[section] && progress >= section+0.99 && section<3){
+    section++;
+    progress=section+0.02;
+    playerX=0;
+    gateFlash=1;
+    message("ENTERING SECTION S"+(section+1));
+  }
+
+  // Goldor slowly advances. Sprinting and terminal-solving save time.
+  bossProgress += dt*(0.105 + (elapsed>70?0.035:0));
+  if(bossProgress >= progress+0.20){
+    showDefeat();
+  }
+
+  if(toastTimer>0){
+    toastTimer-=dt;
+    if(toastTimer<=0) $("toast").classList.remove("show");
+  }
+  cameraShake=Math.max(0,cameraShake-dt);
+  gateFlash=Math.max(0,gateFlash-dt*1.6);
+  updateHUD();
+}
+
+function polygon(points,fill,stroke=null,lineWidth=1){
+  ctx.beginPath();
+  points.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));
+  ctx.closePath();
+  ctx.fillStyle=fill;ctx.fill();
+  if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lineWidth;ctx.stroke();}
+}
+
+function draw() {
+  const shake = cameraShake*18;
+  ctx.save();
+  ctx.translate((Math.random()-.5)*shake,(Math.random()-.5)*shake);
+
+  const horizon=H*0.35;
+  const floorY=H*0.96;
+  const center=W/2;
+
+  const sky=ctx.createLinearGradient(0,0,0,H);
+  sky.addColorStop(0,"#050913");
+  sky.addColorStop(.4,"#101d32");
+  sky.addColorStop(1,"#05070e");
+  ctx.fillStyle=sky;ctx.fillRect(0,0,W,H);
+
+  // The corridor walls converge toward the vanishing point.
+  polygon([[0,horizon],[center-W*.14,horizon],[center-W*.14,floorY],[0,H]],
+    "#182337","#304766",2);
+  polygon([[W,horizon],[center+W*.14,horizon],[center+W*.14,floorY],[W,H]],
+    "#182337","#304766",2);
+  polygon([[center-W*.14,horizon],[center+W*.14,horizon],
+    [W,H],[0,H]],"#101b2c","#2c405c",2);
+
+  // Corridor perspective lines and floor tiles.
+  ctx.strokeStyle="#304663";ctx.lineWidth=1;
+  for(let i=-7;i<=7;i++){
+    ctx.beginPath();
+    ctx.moveTo(center+i*W*.022,horizon);
+    ctx.lineTo(center+i*W*.17,H);
+    ctx.stroke();
+  }
+  for(let j=0;j<12;j++){
+    const t=((j/12 + (progress%0.18)/.18)%1);
+    const y=horizon+(t*t)*(H-horizon);
+    ctx.globalAlpha=.15+t*.4;
+    ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();
+  }
+  ctx.globalAlpha=1;
+
+  // Wall lights.
+  for(let side of [-1,1]){
+    for(let i=0;i<5;i++){
+      const t=(i/5 + (progress%0.8)/.8)%1;
+      const y=horizon+Math.pow(t,1.6)*(H-horizon)*.86;
+      const x=center+side*(W*.14 + t*W*.35);
+      const size=2+t*8;
+      ctx.fillStyle="#55dcff";
+      ctx.shadowBlur=14*t;ctx.shadowColor="#3cdfff";
+      ctx.fillRect(x-size/2,y-size*1.7,size,size*2);
+      ctx.shadowBlur=0;
     }
   }
-  updateHUD();
-}
 
-function spawnTick() {
-  const el=document.createElement("div");
-  el.className="tick"; el.textContent="☠";
-  el.style.left=(35+Math.random()*30)+"%";
-  $("effects").appendChild(el);
-  setTimeout(()=>el.remove(),550);
-}
-
-function shoot() {
-  if (!running) return;
-  const now=performance.now();
-  const interval=now<rapidUntil ? 90 : 230;
-  if(now-lastShot<interval) return;
-  lastShot=now; shots++;
-
-  const arrow=document.createElement("div");
-  arrow.className="arrow"; arrow.textContent="➶";
-  arrow.style.left="23%"; arrow.style.bottom="72px";
-  $("projectiles").appendChild(arrow);
-
-  const duration=220;
-  const start=performance.now();
-  function animateArrow(t) {
-    if(!arrow.isConnected) return;
-    const p=Math.min(1,(t-start)/duration);
-    arrow.style.left=(23+p*55)+"%";
-    arrow.style.bottom=(72+p*105)+"px";
-    if(p<1 && running) requestAnimationFrame(animateArrow);
-    else {
-      arrow.remove();
-      if(running) {
-        const damage=now<rapidUntil ? 2.1 : 1.25;
-        bossHP-=damage;
-        $("goldor").classList.add("hit");
-        setTimeout(()=>$("goldor").classList.remove("hit"),100);
-        updateHUD();
-        if(bossHP<=0) endGame(true,"FOURTH DEVICE COMPLETED!");
-      }
+  // Gates and section signs.
+  const nextGate = section+0.99-progress;
+  if(section<3){
+    const depth=Math.max(.1,Math.min(1,nextGate));
+    const scale=0.15+depth*.85;
+    const gw=W*.31*scale;
+    const gh=H*.48*scale;
+    const gy=horizon+(1-scale)*H*.16;
+    const gx=center-gw/2;
+    ctx.strokeStyle=completed[section]?"#52f7a0":"#f3b94d";
+    ctx.lineWidth=Math.max(1,4*scale);
+    ctx.shadowColor=ctx.strokeStyle;ctx.shadowBlur=12*scale;
+    ctx.strokeRect(gx,gy,gw,gh);
+    ctx.shadowBlur=0;
+    if(!completed[section]){
+      ctx.fillStyle="#f2b34325";
+      ctx.fillRect(gx,gy,gw,gh);
+      ctx.fillStyle="#ffd17a";
+      ctx.textAlign="center";
+      ctx.font=`bold ${Math.max(9,18*scale)}px Arial`;
+      ctx.fillText("LOCKED",center,gy+gh*.5);
+    }else{
+      ctx.fillStyle="#64f8a122";ctx.fillRect(gx,gy,gw,gh);
     }
   }
-  requestAnimationFrame(animateArrow);
-}
 
-function rapidFire() {
-  if(!running || performance.now()<rapidCooldown) return;
-  const now=performance.now();
-  rapidUntil=now+1800;
-  rapidCooldown=now+4500;
-  $("log").textContent="RAPID FIRE! Shoot as fast as you can!";
-  updateHUD();
-}
+  // Terminal is visible when near its activation zone.
+  if(!completed[section]){
+    const terminalDistance=Math.abs(progress-(section+.64));
+    const z=Math.max(.15,1-terminalDistance*1.4);
+    const scale=.25+z*.75;
+    const tx=center+playerX*W*.14;
+    const ty=horizon+H*.24*z;
+    const tw=W*.055*scale;
+    const th=H*.15*scale;
+    ctx.shadowBlur=22*scale;ctx.shadowColor=section===3?"#bd7bff":"#31dfff";
+    const grad=ctx.createLinearGradient(tx-tw,ty-th,tx+tw,ty);
+    grad.addColorStop(0,"#193f5c");grad.addColorStop(1,"#0a172b");
+    ctx.fillStyle=grad;ctx.fillRect(tx-tw,ty-th,tw*2,th);
+    ctx.strokeStyle=section===3?"#c48cff":"#44e5ff";
+    ctx.lineWidth=2*scale;ctx.strokeRect(tx-tw,ty-th,tw*2,th);
+    ctx.shadowBlur=0;
+    ctx.fillStyle="#eafaff";ctx.textAlign="center";
+    ctx.font=`bold ${Math.max(8,14*scale)}px Arial`;
+    ctx.fillText(section===3?"ARROWS":"TERMINAL",tx,ty-th*.45);
+    ctx.fillStyle=section===3?"#bd7bff":"#47f0ff";
+    ctx.fillRect(tx-tw*.65,ty-th*.25,tw*1.3,th*.38);
+  }
 
-function endGame(won,title) {
-  if(finished) return;
-  finished=true; running=false;
-  cancelAnimationFrame(raf);
-  $("deviceState").textContent=won?"COMPLETE":"FAILED";
-  $("overlay").classList.remove("hidden");
-  $("overlay").innerHTML=`
-   <div class="panel">
-    <h2 style="color:${won?'#6ee7a1':'#ff6868'}">${title}</h2>
-    <p>${won
-      ? `Goldor has been defeated and the fourth device is complete!<br>Time remaining: ${Math.max(0,timeLeft).toFixed(2)} seconds.`
-      : `You failed the fourth dev challenge.<br>The timer or Goldor's death ticks defeated you.`}
-      <br><br>Arrows fired: <b>${shots}</b><br>Death ticks survived: <b>${ticks}</b>
-    </p>
-    <button id="againBtn">TRY AGAIN</button>
-  </div>`;
-  $("againBtn").addEventListener("click",startGame);
-  message(won?"DEVICE COMPLETE!":"RUN FAILED!");
-  $("log").textContent=won?"GG! Fourth dev completed.":"Reset and try a faster run.";
-  updateHUD();
+  // Goldor: an imposing mechanical boss at the far end of the corridor.
+  const danger=Math.max(0,Math.min(1,(bossProgress-progress+1.1)/1.1));
+  const bossScale=.45+(1-danger)*.9;
+  const bx=center;
+  const by=horizon+H*.08+(1-danger)*H*.25;
+  ctx.save();
+  ctx.translate(bx,by);
+  ctx.scale(bossScale,bossScale);
+  ctx.shadowColor="#ff3e48";ctx.shadowBlur=28;
+  // legs
+  ctx.fillStyle="#414a5c";
+  ctx.fillRect(-43,20,29,70);ctx.fillRect(14,20,29,70);
+  ctx.fillStyle="#d19a3e";
+  ctx.fillRect(-49,74,40,13);ctx.fillRect(9,74,40,13);
+  // body
+  polygon([[-58,-44],[58,-44],[69,25],[40,52],[-40,52],[-69,25]],
+    "#566579","#f1b74d",4);
+  // chest reactor
+  ctx.fillStyle="#e9b54a";ctx.fillRect(-27,-21,54,45);
+  ctx.fillStyle="#321a22";ctx.fillRect(-18,-12,36,27);
+  ctx.fillStyle="#ff4b4b";ctx.fillRect(-11,-5,22,13);
+  // head
+  polygon([[-44,-78],[44,-78],[56,-42],[-56,-42]],
+    "#75849a","#e6bc67",3);
+  ctx.fillStyle="#ff303c";
+  ctx.fillRect(-29,-64,19,9);ctx.fillRect(10,-64,19,9);
+  // shoulder armor
+  ctx.fillStyle="#313d50";
+  polygon([[-58,-41],[-91,-20],[-73,11],[-53,4]],"#4b5b70","#d7a348",3);
+  polygon([[58,-41],[91,-20],[73,11],[53,4]],"#4b5b70","#d7a348",3);
+  ctx.restore();
+  ctx.shadowBlur=0;
+
+  // First-person hands / weapon silhouette.
+  ctx.fillStyle="#182438";
+  polygon([[W*.32,H],[W*.39,H*.91],[W*.46,H*.95],[W*.48,H]],
+    "#202e44","#4c627f",2);
+  polygon([[W*.68,H],[W*.61,H*.91],[W*.54,H*.95],[W*.52,H]],
+    "#202e44","#4c627f",2);
+  ctx.strokeStyle="#405673";
+  ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(W*.5,H*.88);ctx.lineTo(W*.5,H*.92);ctx.stroke();
+
+  // Crosshair.
+  ctx.strokeStyle="#e8f5ffb0";ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(center-9,H*.53);ctx.lineTo(center-3,H*.53);
+  ctx.moveTo(center+3,H*.53);ctx.lineTo(center+9,H*.53);
+  ctx.moveTo(center,H*.53-9);ctx.lineTo(center,H*.53-3);
+  ctx.moveTo(center,H*.53+3);ctx.lineTo(center,H*.53+9);
+  ctx.stroke();
+
+  if(gateFlash>0){
+    ctx.fillStyle=`rgba(83,255,173,${gateFlash*.12})`;
+    ctx.fillRect(0,0,W,H);
+  }
+  ctx.restore();
 }
 
 function loop(now) {
   if(!running) return;
-  const dt=Math.min((now-lastFrame)/1000,.05);
+  const dt=Math.min(.04,(now-lastFrame)/1000 || 0);
   lastFrame=now;
-  timeLeft-=dt;
-
-  // Goldor's lethal death ticks occur every 0.65 seconds.
-  if(now-lastTick>=650) {
-    lastTick=now; ticks++;
-    damagePlayer(24);
-  }
-
-  if(timeLeft<=0 && running) {
-    timeLeft=0; updateHUD();
-    endGame(false,"9 SECONDS — TIME'S UP!");
-    return;
-  }
-  updateHUD();
-  raf=requestAnimationFrame(loop);
+  update(dt);
+  draw();
+  if(running) requestAnimationFrame(loop);
 }
 
-$("startBtn").addEventListener("click",startGame);
-$("shootBtn").addEventListener("click",shoot);
-$("abilityBtn").addEventListener("click",rapidFire);
-$("restartBtn").addEventListener("click",startGame);
-
-document.addEventListener("keydown",e=>{
-  if(e.code==="Space" || e.code==="Enter") {
-    if(!running && !finished && !$("overlay").classList.contains("hidden")) return;
-    e.preventDefault(); shoot();
-  }
-  if(e.key.toLowerCase()==="q") rapidFire();
-  if(e.key.toLowerCase()==="r") startGame();
-});
-
+// Draw the corridor before starting the game.
+draw();
 updateHUD();
 })();
 </script>
