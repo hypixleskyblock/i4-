@@ -312,3 +312,157 @@
 
         // Target Configuration constructor
         class TargetItem {
+Use code with caution.
+constructor(id, x, y, size, type) {
+this.id = id;
+this.x = x;
+this.y = y;
+this.size = size;
+this.type = type;
+this.dx = (Math.random() - 0.5) * 6; // speed variations for moving targets
+this.dy = (Math.random() - 0.5) * 6;
+this.element = document.createElement('div');
+this.element.classList.add('target');
+this.element.style.width = ${size * 2}px;
+this.element.style.height = ${size * 2}px;
+this.updatePosition();
+// Track interaction clicks inside individual targets
+this.element.addEventListener('mousedown', (e) => {
+e.stopPropagation(); // Avoid triggering arena background clicks
+this.hit();
+});
+}
+updatePosition() {
+this.element.style.left = ${this.x}px;
+this.element.style.top = ${this.y}px;
+}
+move(width, height) {
+this.x += this.dx;
+this.y += this.dy;
+// Bounce system mechanics
+if (this.x - this.size < 0 || this.x + this.size > width) this.dx *= -1;
+if (this.y - this.size < 0 || this.y + this.size > height) this.dy *= -1;
+this.updatePosition();
+}
+hit() {
+if (!isPlaying) return;
+hits++;
+shots++;
+score += 100;
+this.remove();
+updateStats();
+spawnNewTarget();
+}
+remove() {
+if (this.element.parentNode) {
+this.element.parentNode.removeChild(this.element);
+}
+targetsArray = targetsArray.filter(t => t.id !== this.id);
+}
+}
+// Initialize session parameters
+function startSimulation() {
+// Clean interface
+overlayScreen.classList.add('hidden');
+welcomeModal.classList.add('hidden');
+resultsModal.classList.add('hidden');
+// Clear prior states
+clearInterval(gameInterval);
+clearInterval(trackingInterval);
+arena.querySelectorAll('.target').forEach(t => t.remove());
+targetsArray = [];
+// Read dynamic settings
+score = 0;
+hits = 0;
+shots = 0;
+timeLeft = parseInt(durationSelect.value);
+maxTargets = modeSelect.value === 'static' ? 4 : 2;
+isPlaying = true;
+updateStats();
+// Populate system targets
+for (let i = 0; i < maxTargets; i++) {
+spawnNewTarget();
+}
+// Main timer loop
+gameInterval = setInterval(() => {
+timeLeft--;
+updateStats();
+if (timeLeft <= 0) {
+endSimulation();
+}
+}, 1000);
+// Framework loops for non-static vector scenarios
+if (modeSelect.value !== 'static') {
+runPhysicsLoop();
+}
+}
+function spawnNewTarget() {
+if (!isPlaying) return;
+const size = parseInt(sizeSelect.value);
+const arenaRect = arena.getBoundingClientRect();
+// Boundary clamping padding configurations
+const padding = size + 20;
+const x = Math.random() * (arenaRect.width - padding * 2) + padding;
+const y = Math.random() * (arenaRect.height - padding * 2) + padding;
+const id = Math.random().toString(36).substr(2, 9);
+const target = new TargetItem(id, x, y, size, modeSelect.value);
+targetsArray.push(target);
+arena.appendChild(target.element);
+}
+// Framework tracking update rendering ticks
+function runPhysicsLoop() {
+if (!isPlaying) return;
+const arenaRect = arena.getBoundingClientRect();
+// Tracking framework auto damage simulation config
+if (modeSelect.value === 'tracking') {
+trackingInterval = setInterval(() => {
+targetsArray.forEach(t => {
+t.move(arenaRect.width, arenaRect.height);
+});
+}, 16); // ~60fps movement vector refreshes
+} else if (modeSelect.value === 'strafe') {
+trackingInterval = setInterval(() => {
+targetsArray.forEach(t => {
+// Change velocity direction vectors randomly over time
+if(Math.random() < 0.02) t.dx = (Math.random() - 0.5) * 12;
+if(Math.random() < 0.02) t.dy = (Math.random() - 0.5) * 12;
+t.move(arenaRect.width, arenaRect.height);
+});
+}, 16);
+}
+}
+// Global Miss register tracking function
+arena.addEventListener('mousedown', (e) => {
+if (!isPlaying) return;
+// Ensure clicks registered are on background or canvas layouts, not on active UI panels
+if (e.target === arena) {
+shots++;
+score = Math.max(0, score - 30); // Penalize score depletion on missed opportunities
+updateStats();
+}
+});
+function updateStats() {
+const accuracy = shots === 0 ? 100 : Math.round((hits / shots) * 100);
+const timeElapsed = parseInt(durationSelect.value) - timeLeft;
+const kps = timeElapsed === 0 ? 0 : (hits / timeElapsed).toFixed(1);
+scoreVal.textContent = score;
+accVal.textContent = ${accuracy}%;
+timeVal.textContent = ${timeLeft}s;
+kpsVal.textContent = kps;
+}
+function endSimulation() {
+isPlaying = false;
+clearInterval(gameInterval);
+clearInterval(trackingInterval);
+const accuracy = shots === 0 ? 100 : Math.round((hits / shots) * 100);
+resScore.textContent = score;
+resAcc.textContent = ${accuracy}%;
+resHits.textContent = hits;
+resMisses.textContent = shots - hits;
+overlayScreen.classList.remove('hidden');
+resultsModal.classList.remove('hidden');
+}
+// Event hooks layout
+startBtn.addEventListener('click', startSimulation);
+retryBtn.addEventListener('click', startSimulation);
+
