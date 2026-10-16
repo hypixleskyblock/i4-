@@ -3,233 +3,360 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>F7 Goldor Dungeon</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>F7 Goldor - Fourth Dev Simulator</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#080b12;color:#fff;font-family:Arial,sans-serif}
-button{cursor:pointer;font-weight:bold;border:2px solid #6684a9;border-radius:8px;padding:14px;background:#203550;color:white;font-size:16px}
-button:hover{background:#345779}
-header{text-align:center;padding:20px;background:#101a2b;border-bottom:3px solid #44e5ce}
-h1{margin:0;color:#48ead3}
-.sub{color:#b6c6e1;margin-top:8px}
-main{max-width:900px;margin:auto;padding:16px}
-.panel{background:#121c2e;border:1px solid #344761;border-radius:12px;padding:16px;margin-bottom:14px}
-#menu{position:fixed;inset:0;z-index:10;background:linear-gradient(#08101beF,#080b12f5),repeating-linear-gradient(45deg,#263c52 0 2px,#0a101b 2px 24px);display:flex;align-items:center;justify-content:center;padding:20px;text-align:center}
-.menuBox{width:100%;max-width:480px;background:#111b2c;border:2px solid #4be6d0;border-radius:18px;padding:28px;box-shadow:0 0 35px #21d6bb22}
-.logo{font-size:65px;margin:8px}
-.menuBox h1{font-size:clamp(27px,7vw,42px);margin:10px 0}
-.menuBox p{color:#c3d1e5;line-height:1.6}
-.start{width:100%;background:#158b78;border-color:#67ffe6;font-size:22px;padding:18px;margin-top:14px}
-.start:hover{background:#20ad96}
-.small{font-size:13px;color:#9eb2d0}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.stat{background:#080f1b;padding:12px 4px;border-radius:8px;text-align:center;font-size:12px}
-.stat strong{display:block;color:#49e6d1;font-size:19px;margin-top:6px}
-.bar{height:11px;background:#29374e;border-radius:8px;overflow:hidden;margin:8px 0}
-.fill{height:100%;transition:width .2s}
-.hp{background:#ee5069}.mana{background:#538cff}.bossbar{background:#ac69ff}
-#arena{display:flex;justify-content:space-around;align-items:center;text-align:center;min-height:150px;background:radial-gradient(ellipse,#273a58,#080d18 75%);border-radius:10px}
-.sprite{font-size:48px}
-.actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-.wide{width:100%;margin-top:9px}
-#log{height:130px;overflow:auto;background:#080d16;padding:10px;border-radius:8px;font-size:13px;line-height:1.7;overflow-wrap:anywhere}
-.green{color:#5bf2b5}.red{color:#ff788d}.gold{color:#ffd166}
-.hidden{display:none!important}
-footer{text-align:center;color:#7c8eab;font-size:12px;padding:16px}
-@media(max-width:420px){main{padding:9px}.panel{padding:12px}.stats{gap:5px}.stat{padding:10px 2px}.actions button{font-size:13px;padding:12px 5px}}
+body{
+  margin:0;background:#080b12;color:#f1f5f9;
+  font-family:Arial,Helvetica,sans-serif;text-align:center;
+}
+header{padding:15px;background:#141b2b;border-bottom:2px solid #d6a928}
+h1{margin:5px;color:#ffd75e;font-size:clamp(22px,4vw,36px)}
+.subtitle{color:#aab6cb;font-size:13px}
+#game{
+  max-width:1000px;margin:18px auto;padding:12px;
+}
+.hud{
+ display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:12px
+}
+.stat{
+ background:#151d2d;border:1px solid #35425a;border-radius:8px;
+ padding:10px 14px;min-width:120px;font-size:13px
+}
+.stat strong{display:block;color:#ffdc69;font-size:18px;margin-top:4px}
+#arena{
+ position:relative;overflow:hidden;border:2px solid #46536a;border-radius:12px;
+ background:linear-gradient(#182438 0%,#111827 64%,#282c39 64%,#151923 100%);
+ height:390px;
+}
+#arena:before{
+ content:"";position:absolute;inset:0;
+ background:repeating-linear-gradient(90deg,transparent 0 79px,#ffffff08 80px),
+ repeating-linear-gradient(0deg,transparent 0 59px,#ffffff08 60px);
+ pointer-events:none
+}
+#timer{
+ position:absolute;top:12px;left:50%;transform:translateX(-50%);
+ z-index:3;background:#101522dd;border:2px solid #ffd75e;
+ border-radius:9px;padding:7px 20px;font-size:27px;font-weight:bold;color:#ffd75e
+}
+#timer.danger{color:#ff5555;border-color:#ff5555;animation:pulse .3s infinite alternate}
+@keyframes pulse{to{transform:translateX(-50%) scale(1.08)}}
+#goldor{
+ position:absolute;right:12%;top:92px;width:150px;height:190px;
+ font-size:105px;filter:drop-shadow(0 0 14px #f04444);
+ transition:filter .1s;z-index:2
+}
+#goldor.hit{filter:drop-shadow(0 0 30px #fff) brightness(2)}
+#goldorLabel{font-size:13px;color:#ff8888;font-weight:bold}
+#bossBar{position:absolute;right:8%;top:58px;width:42%;height:13px;background:#451d27;border:1px solid #ff7272;border-radius:10px;overflow:hidden}
+#bossHP{height:100%;width:100%;background:linear-gradient(90deg,#ff3434,#ff8585);transition:width .12s}
+#player{
+ position:absolute;left:17%;bottom:55px;font-size:60px;z-index:2;
+ transition:left .15s;filter:drop-shadow(0 0 8px #60a5fa)
+}
+#plate{
+ position:absolute;left:10%;bottom:29px;width:105px;height:19px;
+ background:#22d3ee;border:3px solid #a5f3fc;border-radius:4px;
+ box-shadow:0 0 20px #22d3ee;z-index:1
+}
+#plateLabel{position:absolute;left:7%;bottom:5px;font-size:11px;color:#a5f3fc}
+#projectiles{position:absolute;inset:0;pointer-events:none;z-index:4}
+.arrow{position:absolute;font-size:28px;transition:none}
+.tick{
+ position:absolute;left:50%;top:47%;font-size:44px;color:#ff3e53;
+ animation:tick .5s forwards;z-index:5
+}
+@keyframes tick{to{transform:translateY(-65px);opacity:0}}
+#effects{position:absolute;inset:0;pointer-events:none;z-index:6}
+#message{
+ position:absolute;left:50%;bottom:12px;transform:translateX(-50%);
+ background:#0b1020dd;border:1px solid #718096;border-radius:8px;
+ padding:8px 12px;font-size:13px;white-space:nowrap;max-width:95%
+}
+#overlay{
+ position:absolute;inset:0;background:#060913eF;z-index:10;
+ display:flex;align-items:center;justify-content:center;padding:20px
+}
+#overlay.hidden{display:none}
+.panel{max-width:490px}
+.panel h2{font-size:32px;color:#ffd75e}
+.panel p{line-height:1.6;color:#d0d9e8}
+button{
+ background:#d9a928;color:#171717;border:0;border-radius:8px;
+ padding:13px 18px;font-weight:bold;font-size:15px;cursor:pointer;margin:5px
+}
+button:hover{background:#ffe080}
+button:disabled{opacity:.4;cursor:not-allowed}
+#controls{
+ display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:12px 0
+}
+.action{background:#26364e;color:white;border:1px solid #4c6385}
+.action:active{transform:scale(.96)}
+#healthWrap{height:17px;background:#3d1721;border-radius:8px;overflow:hidden;margin:10px auto;max-width:500px}
+#health{height:100%;width:100%;background:#28cf7a;transition:width .15s}
+#healthText{font-size:12px;color:#b6c3d8}
+#gear{display:flex;justify-content:center;gap:7px;flex-wrap:wrap;margin:12px}
+.gear{
+ padding:8px 10px;background:#151d2d;border:1px solid #394761;
+ border-radius:7px;font-size:12px
+}
+.ready{color:#6ee7a1}.used{color:#ff7979}
+#log{font-size:12px;color:#aab6cb;min-height:18px}
+footer{color:#65738a;font-size:11px;padding:18px}
+@media(max-width:600px){
+ #arena{height:340px}
+ #goldor{right:5%;font-size:80px;width:100px;top:110px}
+ #bossBar{right:5%;width:42%}
+ #player{left:12%;font-size:48px}
+ #plate{left:8%;width:80px}
+ .stat{min-width:95px;padding:8px}
+}
 </style>
 </head>
 <body>
-
-<div id="menu">
- <div class="menuBox">
-  <div class="logo">⚔️</div>
-  <h1>F7 GOLDOR</h1>
-  <h2 style="color:#48ead3">FOURTH DEV · I4</h2>
-  <p>MASTER DUNGEONS</p>
-  <p>🛡 Goldor Tank<br>🏹 Juju Shortbow Archer<br>🐦 Level 100 Phoenix</p>
-  <button class="start" onclick="startGame()">▶ START GAME</button>
-  <p class="small">Fan-made browser game · No downloads required</p>
- </div>
-</div>
-
 <header>
- <h1>⚔ F7: GOLDOR EARLY ENTER</h1>
- <div class="sub">FOURTH DEV · I4 ARCHER · DUNGEON RUN</div>
+ <h1>⚔ F7 GOLDOR: FOURTH DEV</h1>
+ <div class="subtitle">Master Mode • Terminal Challenge • Juju Shortbow Simulator</div>
 </header>
 
-<main>
- <section class="panel">
-  <div class="stats">
-   <div class="stat">❤️ HEALTH<strong id="healthText">1000 / 1000</strong></div>
-   <div class="stat">💧 MANA<strong id="manaText">500 / 500</strong></div>
-   <div class="stat">💀 GOLDOR HP<strong id="bossText">12000</strong></div>
-  </div>
-  <div class="bar"><div id="healthBar" class="fill hp"></div></div>
-  <div class="bar"><div id="manaBar" class="fill mana"></div></div>
-  <div class="bar"><div id="bossBar" class="fill bossbar"></div></div>
- </section>
-
- <div class="panel">
-  <h2>🏰 Dungeon Arena</h2>
-  <div id="arena">
-   <div><div class="sprite">🛡️</div><b>You</b><br>Goldor Tank</div>
-   <div><div class="sprite">💀</div><b id="bossName">Goldor</b><br><span id="bossMood">Waiting...</span></div>
-  </div>
-  <h3>⚔ Combat</h3>
-  <div class="actions">
-   <button onclick="attack()">🏹 Juju Shortbow</button>
-   <button onclick="ability()">✨ Tank Ability</button>
-   <button onclick="heal()">💚 Phoenix Heal</button>
-   <button onclick="enterDev()">🚪 Enter Fourth Dev</button>
-  </div>
-  <button class="wide" onclick="nextPhase()">➡ Advance Dungeon Phase</button>
-  <button class="wide" onclick="showMenu()">🏠 Main Menu</button>
+<div id="game">
+ <div class="hud">
+  <div class="stat">TIME LEFT<strong id="hudTime">9.00s</strong></div>
+  <div class="stat">DEVICE<strong id="deviceState">INACTIVE</strong></div>
+  <div class="stat">DEATH TICKS<strong id="tickCount">0</strong></div>
  </div>
 
- <div class="panel">
-  <h2>🎒 Your Loadout</h2>
-  <p>🛡 Goldor Armor — Tank Set</p>
-  <p>🎭 Bonzo's Mask — Extra Life</p>
-  <p>🎭 Spirit Mask — Emergency Life</p>
-  <p>🏹 Juju Shortbow — Archer Weapon</p>
-  <p>🐦 Phoenix Pet — <span class="gold">LEVEL 100</span></p>
-  <hr style="border-color:#344761">
-  <b>Objective:</b>
-  <p id="objective">Press START GAME to begin.</p>
-  <b>Fourth Device:</b> <span id="devStatus" class="red">LOCKED</span>
-  <h3>📜 Dungeon Log</h3>
-  <div id="log">Welcome! Press START GAME to begin your run.</div>
+ <div id="healthWrap"><div id="health"></div></div>
+ <div id="healthText">❤ Health: 100 / 100</div>
+
+ <div id="gear">
+  <div class="gear">🎭 Bonzo Mask: <span id="bonzo" class="ready">READY</span></div>
+  <div class="gear">👻 Spirit Mask: <span id="spirit" class="ready">READY</span></div>
+  <div class="gear">🐦 Phoenix Lv. 100: <span id="phoenix" class="ready">READY</span></div>
  </div>
-</main>
-<footer>Fan-made game inspired by Hypixel SkyBlock. Not affiliated with Hypixel.</footer>
+
+ <div id="arena">
+  <div id="timer">9.00</div>
+  <div id="bossBar"><div id="bossHP"></div></div>
+  <div id="goldor">🤖<div id="goldorLabel">GOLDOR • FOURTH DEV</div></div>
+  <div id="plate"></div>
+  <div id="plateLabel">PRESSURE PLATE</div>
+  <div id="player">🧙</div>
+  <div id="projectiles"></div>
+  <div id="effects"></div>
+  <div id="message">Step on the pressure plate to begin!</div>
+
+  <div id="overlay">
+   <div class="panel">
+    <h2>THE FOURTH DEVICE</h2>
+    <p>
+     Goldor's death ticks are lethal. Stand on the pressure plate,
+     activate the fourth device, and destroy Goldor with your Juju Shortbow.
+     <br><br>
+     You have <b>exactly 9 seconds</b>. Your Bonzo Mask, Spirit Mask,
+     and Level 100 Phoenix Pet can each save you once.
+    </p>
+    <button id="startBtn">ENTER THE BOSS ROOM</button>
+   </div>
+  </div>
+ </div>
+
+ <div id="controls">
+  <button id="shootBtn">🏹 SHOOT JUJU</button>
+  <button id="abilityBtn" class="action">⚡ RAPID FIRE</button>
+  <button id="restartBtn" class="action">↻ RESTART</button>
+ </div>
+ <div id="log">Tip: Keep firing. Rapid Fire temporarily increases your attack speed.</div>
+</div>
+
+<footer>Fan-made browser game inspired by Hypixel SkyBlock. Not affiliated with Hypixel.</footer>
 
 <script>
-let hp=1000,maxHp=1000,mana=500,maxMana=500;
-let boss=12000,maxBoss=12000,phase=1,dev=false;
-let started=false,gameOver=false,victory=false;
-let bonzo=true,spirit=true,phoenix=true;
+(() => {
+const $ = id => document.getElementById(id);
 
-const $=id=>document.getElementById(id);
+let running = false, finished = false;
+let timeLeft = 9, lastFrame = 0, lastShot = 0, lastTick = 0;
+let hp = 100, bossHP = 100, ticks = 0;
+let bonzoReady = true, spiritReady = true, phoenixReady = true;
+let rapidUntil = 0, rapidCooldown = 0, raf = 0;
+let shots = 0, startTime = 0;
 
-function log(s){
- const el=$("log");
- el.innerHTML+="<br>"+s;
- el.scrollTop=el.scrollHeight;
+function updateHUD() {
+  $("hudTime").textContent = Math.max(0,timeLeft).toFixed(2)+"s";
+  $("timer").textContent = Math.max(0,timeLeft).toFixed(2);
+  $("timer").classList.toggle("danger",timeLeft <= 3 && running);
+  $("deviceState").textContent = running ? "ACTIVE" : finished ? "COMPLETE" : "INACTIVE";
+  $("tickCount").textContent = ticks;
+  $("health").style.width = Math.max(0,hp)+"%";
+  $("healthText").textContent = "❤ Health: "+Math.max(0,Math.ceil(hp))+" / 100";
+  $("bossHP").style.width = Math.max(0,bossHP)+"%";
+  $("bonzo").textContent = bonzoReady ? "READY" : "USED";
+  $("bonzo").className = bonzoReady ? "ready" : "used";
+  $("spirit").textContent = spiritReady ? "READY" : "USED";
+  $("spirit").className = spiritReady ? "ready" : "used";
+  $("phoenix").textContent = phoenixReady ? "READY" : "USED";
+  $("phoenix").className = phoenixReady ? "ready" : "used";
+  $("shootBtn").disabled = !running;
+  $("abilityBtn").disabled = !running || performance.now()<rapidCooldown;
 }
-function update(){
- $("healthText").textContent=Math.max(0,hp)+" / "+maxHp;
- $("manaText").textContent=mana+" / "+maxMana;
- $("bossText").textContent=Math.max(0,boss);
- $("healthBar").style.width=Math.max(0,hp/maxHp*100)+"%";
- $("manaBar").style.width=mana/maxMana*100+"%";
- $("bossBar").style.width=Math.max(0,boss/maxBoss*100)+"%";
- $("bossName").textContent=boss<=0?"DEFEATED":"Goldor";
- $("bossMood").textContent=boss<=0?"Boss defeated!":"Phase "+phase;
- $("devStatus").textContent=dev?"UNLOCKED":"LOCKED";
- $("devStatus").className=dev?"green":"red";
- if(boss<=0&&!victory){
-  victory=true;gameOver=true;
-  $("objective").textContent="Victory! Goldor has been defeated!";
-  log('<span class="gold">[VICTORY] F7 CLEAR!</span>');
- }
+
+function message(text) { $("message").textContent=text; }
+
+function startGame() {
+  cancelAnimationFrame(raf);
+  running=true; finished=false; timeLeft=9; hp=100; bossHP=100;
+  ticks=0; shots=0; lastShot=0; lastTick=0;
+  bonzoReady=spiritReady=phoenixReady=true;
+  rapidUntil=0; rapidCooldown=0; startTime=performance.now();
+  $("overlay").classList.add("hidden");
+  $("projectiles").innerHTML="";
+  $("effects").innerHTML="";
+  $("goldor").style.opacity="1";
+  $("goldor").style.transform="";
+  $("player").style.left="17%";
+  message("FOURTH DEV ACTIVE! SHOOT GOLDOR!");
+  $("log").textContent="The death ticks have started. Keep shooting!";
+  updateHUD();
+  lastFrame=performance.now();
+  raf=requestAnimationFrame(loop);
 }
-function startGame(){
- if(!started){
-  started=true;
-  $("log").innerHTML="[SYSTEM] Dungeon run started!";
-  log("[TANK] Goldor armor equipped.");
-  log("[ARCHER] Juju Shortbow ready.");
-  log("[PET] Level 100 Phoenix equipped.");
-  log("[DUNGEON] Defeat Goldor and enter the fourth device.");
- }
- $("menu").classList.add("hidden");
- $("objective").textContent="Advance to phase 2, enter the fourth device, and defeat Goldor.";
- update();
+
+function damagePlayer(amount) {
+  if (!running) return;
+  hp -= amount;
+  spawnTick();
+  if (hp <= 0) {
+    if (bonzoReady) {
+      bonzoReady=false; hp=50;
+      $("log").textContent="BONZO MASK activated! You survived a lethal hit.";
+    } else if (spiritReady) {
+      spiritReady=false; hp=50;
+      $("log").textContent="SPIRIT MASK activated! You survived a lethal hit.";
+    } else if (phoenixReady) {
+      phoenixReady=false; hp=100;
+      $("log").textContent="PHOENIX PET activated! Second wind!";
+    } else {
+      hp=0; updateHUD(); endGame(false,"THE DEATH TICKS GOT YOU");
+      return;
+    }
+  }
+  updateHUD();
 }
-function showMenu(){$("menu").classList.remove("hidden")}
-function ready(){
- if(!started){log("[SYSTEM] Press START GAME first.");return false}
- if(gameOver){log("[SYSTEM] Run ended. Return to the main menu to restart.");return false}
- return true;
+
+function spawnTick() {
+  const el=document.createElement("div");
+  el.className="tick"; el.textContent="☠";
+  el.style.left=(35+Math.random()*30)+"%";
+  $("effects").appendChild(el);
+  setTimeout(()=>el.remove(),550);
 }
-function attack(){
- if(!ready()||boss<=0)return;
- const damage=Math.floor(500+Math.random()*700);
- boss=Math.max(0,boss-damage);
- log('<span class="green">[JUJU] Shortbow hit for '+damage+' damage!</span>');
- if(boss>0)enemyTurn();
- update();
+
+function shoot() {
+  if (!running) return;
+  const now=performance.now();
+  const interval=now<rapidUntil ? 90 : 230;
+  if(now-lastShot<interval) return;
+  lastShot=now; shots++;
+
+  const arrow=document.createElement("div");
+  arrow.className="arrow"; arrow.textContent="➶";
+  arrow.style.left="23%"; arrow.style.bottom="72px";
+  $("projectiles").appendChild(arrow);
+
+  const duration=220;
+  const start=performance.now();
+  function animateArrow(t) {
+    if(!arrow.isConnected) return;
+    const p=Math.min(1,(t-start)/duration);
+    arrow.style.left=(23+p*55)+"%";
+    arrow.style.bottom=(72+p*105)+"px";
+    if(p<1 && running) requestAnimationFrame(animateArrow);
+    else {
+      arrow.remove();
+      if(running) {
+        const damage=now<rapidUntil ? 2.1 : 1.25;
+        bossHP-=damage;
+        $("goldor").classList.add("hit");
+        setTimeout(()=>$("goldor").classList.remove("hit"),100);
+        updateHUD();
+        if(bossHP<=0) endGame(true,"FOURTH DEVICE COMPLETED!");
+      }
+    }
+  }
+  requestAnimationFrame(animateArrow);
 }
-function ability(){
- if(!ready())return;
- if(mana<100){log("[MANA] Not enough mana!");return}
- mana-=100;
- const damage=300,healing=100;
- boss=Math.max(0,boss-damage);
- hp=Math.min(maxHp,hp+healing);
- log("[TANK] Ability dealt "+damage+" damage and restored "+healing+" HP.");
- if(boss>0)enemyTurn();
- update();
+
+function rapidFire() {
+  if(!running || performance.now()<rapidCooldown) return;
+  const now=performance.now();
+  rapidUntil=now+1800;
+  rapidCooldown=now+4500;
+  $("log").textContent="RAPID FIRE! Shoot as fast as you can!";
+  updateHUD();
 }
-function heal(){
- if(!ready())return;
- if(mana<80){log("[MANA] Not enough mana!");return}
- mana-=80;
- const amount=300;
- hp=Math.min(maxHp,hp+amount);
- log('<span class="green">[PHOENIX] Restored '+amount+' HP!</span>');
- update();
+
+function endGame(won,title) {
+  if(finished) return;
+  finished=true; running=false;
+  cancelAnimationFrame(raf);
+  $("deviceState").textContent=won?"COMPLETE":"FAILED";
+  $("overlay").classList.remove("hidden");
+  $("overlay").innerHTML=`
+   <div class="panel">
+    <h2 style="color:${won?'#6ee7a1':'#ff6868'}">${title}</h2>
+    <p>${won
+      ? `Goldor has been defeated and the fourth device is complete!<br>Time remaining: ${Math.max(0,timeLeft).toFixed(2)} seconds.`
+      : `You failed the fourth dev challenge.<br>The timer or Goldor's death ticks defeated you.`}
+      <br><br>Arrows fired: <b>${shots}</b><br>Death ticks survived: <b>${ticks}</b>
+    </p>
+    <button id="againBtn">TRY AGAIN</button>
+  </div>`;
+  $("againBtn").addEventListener("click",startGame);
+  message(won?"DEVICE COMPLETE!":"RUN FAILED!");
+  $("log").textContent=won?"GG! Fourth dev completed.":"Reset and try a faster run.";
+  updateHUD();
 }
-function enterDev(){
- if(!ready())return;
- if(dev){log("[I4] Fourth device already entered!");return}
- if(phase<2){log('<span class="red">[I4] Advance to phase 2 first!</span>');return}
- dev=true;
- log('<span class="gold">[I4] Fourth device entered!</span>');
- $("objective").textContent="Fourth device entered! Defeat Goldor.";
- update();
+
+function loop(now) {
+  if(!running) return;
+  const dt=Math.min((now-lastFrame)/1000,.05);
+  lastFrame=now;
+  timeLeft-=dt;
+
+  // Goldor's lethal death ticks occur every 0.65 seconds.
+  if(now-lastTick>=650) {
+    lastTick=now; ticks++;
+    damagePlayer(24);
+  }
+
+  if(timeLeft<=0 && running) {
+    timeLeft=0; updateHUD();
+    endGame(false,"9 SECONDS — TIME'S UP!");
+    return;
+  }
+  updateHUD();
+  raf=requestAnimationFrame(loop);
 }
-function nextPhase(){
- if(!ready())return;
- phase=Math.min(4,phase+1);
- mana=Math.min(maxMana,mana+60);
- log("[DUNGEON] Advanced to phase "+phase+". +60 mana.");
- if(phase>=2)$("objective").textContent="Enter the fourth device and defeat Goldor.";
- update();
-}
-function enemyTurn(){
- if(boss<=0)return;
- let damage=Math.floor(70+Math.random()*100);
- if(dev)damage=Math.floor(damage*.75);
- hp-=damage;
- log('<span class="red">[GOLDOR] You took '+damage+' damage.</span>');
- if(hp<=0){
-  if(bonzo){bonzo=false;hp=500;log('<span class="gold">[BONZO] Mask revived you!</span>')}
-  else if(spirit){spirit=false;hp=400;log('<span class="gold">[SPIRIT] Mask revived you!</span>')}
-  else if(phoenix){phoenix=false;hp=500;log('<span class="gold">[PHOENIX] Phoenix saved your run!</span>')}
-  else{hp=0;gameOver=true;$("objective").textContent="You died! Return to the main menu to restart.";log('<span class="red">[DEATH] Run failed!</span>')}
- }
- update();
-}
-function resetGame(){
- hp=maxHp;mana=maxMana;boss=maxBoss;phase=1;dev=false;
- started=false;gameOver=false;victory=false;
- bonzo=true;spirit=true;phoenix=true;
- $("log").textContent="Welcome! Press START GAME to begin your run.";
- $("objective").textContent="Press START GAME to begin.";
- $("menu").classList.remove("hidden");
- update();
-}
-$("menu").querySelector(".start").addEventListener("contextmenu",e=>e.preventDefault());
-const menuBox=$("menu").querySelector(".menuBox");
-const restart=document.createElement("button");
-restart.className="wide";
-restart.textContent="🔄 RESTART RUN";
-restart.onclick=resetGame;
-menuBox.appendChild(restart);
-update();
+
+$("startBtn").addEventListener("click",startGame);
+$("shootBtn").addEventListener("click",shoot);
+$("abilityBtn").addEventListener("click",rapidFire);
+$("restartBtn").addEventListener("click",startGame);
+
+document.addEventListener("keydown",e=>{
+  if(e.code==="Space" || e.code==="Enter") {
+    if(!running && !finished && !$("overlay").classList.contains("hidden")) return;
+    e.preventDefault(); shoot();
+  }
+  if(e.key.toLowerCase()==="q") rapidFire();
+  if(e.key.toLowerCase()==="r") startGame();
+});
+
+updateHUD();
+})();
 </script>
 </body>
 </html>
