@@ -3,102 +3,120 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>F7 Goldor: Fourth Dev</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>F7 Goldor Dungeon</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#080b15;color:#edf3ff;font-family:Arial,sans-serif}
-header{padding:18px;text-align:center;background:#11182a;border-bottom:2px solid #39d9c8}
-h1{margin:0;color:#48e4d0;font-size:27px}
-.sub{color:#a9b9d9;margin-top:7px}
-main{max-width:1000px;margin:auto;padding:16px}
-.panel{background:#111a2b;border:1px solid #293a58;border-radius:12px;padding:15px;margin-bottom:14px}
+body{margin:0;background:#080b12;color:#fff;font-family:Arial,sans-serif}
+button{cursor:pointer;font-weight:bold;border:2px solid #6684a9;border-radius:8px;padding:14px;background:#203550;color:white;font-size:16px}
+button:hover{background:#345779}
+header{text-align:center;padding:20px;background:#101a2b;border-bottom:3px solid #44e5ce}
+h1{margin:0;color:#48ead3}
+.sub{color:#b6c6e1;margin-top:8px}
+main{max-width:900px;margin:auto;padding:16px}
+.panel{background:#121c2e;border:1px solid #344761;border-radius:12px;padding:16px;margin-bottom:14px}
+#menu{position:fixed;inset:0;z-index:10;background:linear-gradient(#08101beF,#080b12f5),repeating-linear-gradient(45deg,#263c52 0 2px,#0a101b 2px 24px);display:flex;align-items:center;justify-content:center;padding:20px;text-align:center}
+.menuBox{width:100%;max-width:480px;background:#111b2c;border:2px solid #4be6d0;border-radius:18px;padding:28px;box-shadow:0 0 35px #21d6bb22}
+.logo{font-size:65px;margin:8px}
+.menuBox h1{font-size:clamp(27px,7vw,42px);margin:10px 0}
+.menuBox p{color:#c3d1e5;line-height:1.6}
+.start{width:100%;background:#158b78;border-color:#67ffe6;font-size:22px;padding:18px;margin-top:14px}
+.start:hover{background:#20ad96}
+.small{font-size:13px;color:#9eb2d0}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.stat{background:#080f1d;border-radius:8px;padding:12px;text-align:center}
-.stat strong{display:block;color:#49e6d1;font-size:21px;margin-top:5px}
-.bar{height:12px;background:#273148;border-radius:8px;overflow:hidden;margin-top:8px}
-.fill{height:100%;width:100%;transition:width .2s}
-.hp{background:#e64e6b}.mana{background:#5289ff}.bossbar{background:#a35dff}
-button{background:#21334e;color:white;border:1px solid #49678d;border-radius:8px;padding:12px;cursor:pointer;font-weight:bold}
-button:hover{background:#2d4d72}
-button:disabled{opacity:.4;cursor:not-allowed}
-.actions{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.stat{background:#080f1b;padding:12px 4px;border-radius:8px;text-align:center;font-size:12px}
+.stat strong{display:block;color:#49e6d1;font-size:19px;margin-top:6px}
+.bar{height:11px;background:#29374e;border-radius:8px;overflow:hidden;margin:8px 0}
+.fill{height:100%;transition:width .2s}
+.hp{background:#ee5069}.mana{background:#538cff}.bossbar{background:#ac69ff}
+#arena{display:flex;justify-content:space-around;align-items:center;text-align:center;min-height:150px;background:radial-gradient(ellipse,#273a58,#080d18 75%);border-radius:10px}
+.sprite{font-size:48px}
+.actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 .wide{width:100%;margin-top:9px}
-#arena{height:180px;background:radial-gradient(ellipse,#243653,#090e1b 72%);border-radius:10px;display:flex;align-items:center;justify-content:space-around;text-align:center}
-.player,.boss{font-size:48px}
-#log{height:145px;overflow:auto;background:#070b13;padding:10px;border-radius:8px;font-size:13px;line-height:1.65}
-.gold{color:#ffd166}.green{color:#50e6b4}.red{color:#ff7188}.purple{color:#c29bff}
-.gear{line-height:1.9}
-footer{text-align:center;color:#7586a5;padding:16px;font-size:12px}
-@media(min-width:650px){.layout{display:grid;grid-template-columns:1fr 1fr;gap:14px}.layout .panel{margin-bottom:0}.actions{grid-template-columns:repeat(2,1fr)}}
+#log{height:130px;overflow:auto;background:#080d16;padding:10px;border-radius:8px;font-size:13px;line-height:1.7;overflow-wrap:anywhere}
+.green{color:#5bf2b5}.red{color:#ff788d}.gold{color:#ffd166}
+.hidden{display:none!important}
+footer{text-align:center;color:#7c8eab;font-size:12px;padding:16px}
+@media(max-width:420px){main{padding:9px}.panel{padding:12px}.stats{gap:5px}.stat{padding:10px 2px}.actions button{font-size:13px;padding:12px 5px}}
 </style>
 </head>
 <body>
+
+<div id="menu">
+ <div class="menuBox">
+  <div class="logo">⚔️</div>
+  <h1>F7 GOLDOR</h1>
+  <h2 style="color:#48ead3">FOURTH DEV · I4</h2>
+  <p>MASTER DUNGEONS</p>
+  <p>🛡 Goldor Tank<br>🏹 Juju Shortbow Archer<br>🐦 Level 100 Phoenix</p>
+  <button class="start" onclick="startGame()">▶ START GAME</button>
+  <p class="small">Fan-made browser game · No downloads required</p>
+ </div>
+</div>
+
 <header>
-<h1>⚔ F7: GOLDOR EARLY ENTER</h1>
-<div class="sub">MASTER MODE DUNGEONS · FOURTH DEV · I4 ARCHER</div>
+ <h1>⚔ F7: GOLDOR EARLY ENTER</h1>
+ <div class="sub">FOURTH DEV · I4 ARCHER · DUNGEON RUN</div>
 </header>
+
 <main>
-<div class="panel">
-<div class="stats">
-<div class="stat">❤️ Health<strong id="healthText">1000 / 1000</strong></div>
-<div class="stat">💧 Mana<strong id="manaText">500 / 500</strong></div>
-<div class="stat">☠ Goldor HP<strong id="bossText">12000</strong></div>
-</div>
-<div class="bar"><div class="fill hp" id="healthBar"></div></div>
-<div class="bar"><div class="fill mana" id="manaBar"></div></div>
-<div class="bar"><div class="fill bossbar" id="bossBar"></div></div>
-</div>
+ <section class="panel">
+  <div class="stats">
+   <div class="stat">❤️ HEALTH<strong id="healthText">1000 / 1000</strong></div>
+   <div class="stat">💧 MANA<strong id="manaText">500 / 500</strong></div>
+   <div class="stat">💀 GOLDOR HP<strong id="bossText">12000</strong></div>
+  </div>
+  <div class="bar"><div id="healthBar" class="fill hp"></div></div>
+  <div class="bar"><div id="manaBar" class="fill mana"></div></div>
+  <div class="bar"><div id="bossBar" class="fill bossbar"></div></div>
+ </section>
 
-<div class="layout">
-<section class="panel">
-<h3>🏰 Dungeon Arena</h3>
-<div id="arena">
-<div><div class="player">🛡️</div><b>You: Goldor Tank</b><br><small>Early Enter</small></div>
-<div><div class="boss">💀</div><b id="bossName">Goldor</b><br><small id="bossMood">The seventh floor</small></div>
-</div>
-<h3>Combat</h3>
-<div class="actions">
-<button onclick="attack()">🏹 Juju Shortbow</button>
-<button onclick="ability()">✨ Tank Ability</button>
-<button onclick="heal()">💚 Phoenix Revival</button>
-<button onclick="enterDev()">🚪 Enter 4th Device</button>
-</div>
-<button class="wide" onclick="nextPhase()">➡ Advance Dungeon Phase</button>
-<button class="wide" onclick="resetGame()">🔄 Restart Run</button>
-</section>
+ <div class="panel">
+  <h2>🏰 Dungeon Arena</h2>
+  <div id="arena">
+   <div><div class="sprite">🛡️</div><b>You</b><br>Goldor Tank</div>
+   <div><div class="sprite">💀</div><b id="bossName">Goldor</b><br><span id="bossMood">Waiting...</span></div>
+  </div>
+  <h3>⚔ Combat</h3>
+  <div class="actions">
+   <button onclick="attack()">🏹 Juju Shortbow</button>
+   <button onclick="ability()">✨ Tank Ability</button>
+   <button onclick="heal()">💚 Phoenix Heal</button>
+   <button onclick="enterDev()">🚪 Enter Fourth Dev</button>
+  </div>
+  <button class="wide" onclick="nextPhase()">➡ Advance Dungeon Phase</button>
+  <button class="wide" onclick="showMenu()">🏠 Main Menu</button>
+ </div>
 
-<section class="panel">
-<h3>🎒 Your Loadout</h3>
-<div class="gear">
-<div class="gold">🛡 Goldor Armor — Tank Set</div>
-<div>🎭 Bonzo's Mask — Extra Life</div>
-<div>🎭 Spirit Mask — Emergency Survival</div>
-<div class="green">🏹 Juju Shortbow — Archer Weapon</div>
-<div>🐦 Phoenix Pet <b class="gold">LEVEL 100</b></div>
-<div>🗡 Dungeon fighter · Role: Tank / Archer</div>
-<hr style="border-color:#293a58">
-<b>Dungeon Objective</b>
-<p id="objective">Defeat Goldor and enter the fourth device.</p>
-<b>Fourth Dev Status:</b> <span id="devStatus" class="red">LOCKED</span>
-</div>
-<h3>📜 Dungeon Log</h3>
-<div id="log">[SYSTEM] Welcome to Floor 7.<br>[PARTY] You are playing Goldor early-enter tank.<br>[ARCHER] Juju Shortbow equipped.<br>[PET] Level 100 Phoenix ready.</div>
-</section>
-</div>
-<footer>Fan-made browser game inspired by Hypixel SkyBlock. Not affiliated with Hypixel.</footer>
+ <div class="panel">
+  <h2>🎒 Your Loadout</h2>
+  <p>🛡 Goldor Armor — Tank Set</p>
+  <p>🎭 Bonzo's Mask — Extra Life</p>
+  <p>🎭 Spirit Mask — Emergency Life</p>
+  <p>🏹 Juju Shortbow — Archer Weapon</p>
+  <p>🐦 Phoenix Pet — <span class="gold">LEVEL 100</span></p>
+  <hr style="border-color:#344761">
+  <b>Objective:</b>
+  <p id="objective">Press START GAME to begin.</p>
+  <b>Fourth Device:</b> <span id="devStatus" class="red">LOCKED</span>
+  <h3>📜 Dungeon Log</h3>
+  <div id="log">Welcome! Press START GAME to begin your run.</div>
+ </div>
 </main>
+<footer>Fan-made game inspired by Hypixel SkyBlock. Not affiliated with Hypixel.</footer>
 
 <script>
 let hp=1000,maxHp=1000,mana=500,maxMana=500;
-let boss=12000,maxBoss=12000,phase=1,dev=false,gameOver=false;
+let boss=12000,maxBoss=12000,phase=1,dev=false;
+let started=false,gameOver=false,victory=false;
 let bonzo=true,spirit=true,phoenix=true;
 
 const $=id=>document.getElementById(id);
+
 function log(s){
-  const el=$("log");
-  el.innerHTML+="<br>"+s;
-  el.scrollTop=el.scrollHeight;
+ const el=$("log");
+ el.innerHTML+="<br>"+s;
+ el.scrollTop=el.scrollHeight;
 }
 function update(){
  $("healthText").textContent=Math.max(0,hp)+" / "+maxHp;
@@ -111,109 +129,106 @@ function update(){
  $("bossMood").textContent=boss<=0?"Boss defeated!":"Phase "+phase;
  $("devStatus").textContent=dev?"UNLOCKED":"LOCKED";
  $("devStatus").className=dev?"green":"red";
- if(hp<=0&&!gameOver)endGame();
- if(boss<=0&&!gameOver){
-   gameOver=true;
-   $("objective").textContent="Goldor defeated! Dungeon cleared!";
-   log('<span class="gold">[VICTORY] GOLDOR DEFEATED! F7 CLEAR!</span>');
+ if(boss<=0&&!victory){
+  victory=true;gameOver=true;
+  $("objective").textContent="Victory! Goldor has been defeated!";
+  log('<span class="gold">[VICTORY] F7 CLEAR!</span>');
  }
 }
-function check(){
- if(gameOver)return true;
- return false;
+function startGame(){
+ if(!started){
+  started=true;
+  $("log").innerHTML="[SYSTEM] Dungeon run started!";
+  log("[TANK] Goldor armor equipped.");
+  log("[ARCHER] Juju Shortbow ready.");
+  log("[PET] Level 100 Phoenix equipped.");
+  log("[DUNGEON] Defeat Goldor and enter the fourth device.");
+ }
+ $("menu").classList.add("hidden");
+ $("objective").textContent="Advance to phase 2, enter the fourth device, and defeat Goldor.";
+ update();
+}
+function showMenu(){$("menu").classList.remove("hidden")}
+function ready(){
+ if(!started){log("[SYSTEM] Press START GAME first.");return false}
+ if(gameOver){log("[SYSTEM] Run ended. Return to the main menu to restart.");return false}
+ return true;
 }
 function attack(){
- if(check())return;
- if(boss<=0)return;
- const damage= Math.floor(500+Math.random()*700);
+ if(!ready()||boss<=0)return;
+ const damage=Math.floor(500+Math.random()*700);
  boss=Math.max(0,boss-damage);
- log('<span class="green">[JUJU] You fired your Juju Shortbow for '+damage+' damage!</span>');
+ log('<span class="green">[JUJU] Shortbow hit for '+damage+' damage!</span>');
  if(boss>0)enemyTurn();
  update();
 }
 function ability(){
- if(check())return;
- if(mana<100){log('<span class="red">[MANA] Not enough mana!</span>');return}
+ if(!ready())return;
+ if(mana<100){log("[MANA] Not enough mana!");return}
  mana-=100;
- const damage=300;
+ const damage=300,healing=100;
  boss=Math.max(0,boss-damage);
- const reduced=Math.floor(Math.random()*100)+40;
- hp=Math.min(maxHp,hp+reduced);
- log('[TANK] Defensive ability used! '+damage+' damage and '+reduced+' healing.');
+ hp=Math.min(maxHp,hp+healing);
+ log("[TANK] Ability dealt "+damage+" damage and restored "+healing+" HP.");
  if(boss>0)enemyTurn();
  update();
 }
 function heal(){
- if(check())return;
- if(mana<80){log('[MANA] Not enough mana!');return}
+ if(!ready())return;
+ if(mana<80){log("[MANA] Not enough mana!");return}
  mana-=80;
  const amount=300;
  hp=Math.min(maxHp,hp+amount);
- log('<span class="green">[PHOENIX] You recovered '+amount+' HP!</span>');
+ log('<span class="green">[PHOENIX] Restored '+amount+' HP!</span>');
  update();
 }
 function enterDev(){
- if(check())return;
- if(dev){log('[DEVICE] You already entered the fourth device!');return}
- if(phase<2){
-   log('<span class="red">[DEVICE] The fourth device is not accessible yet. Advance the dungeon phase!</span>');
-   return;
- }
+ if(!ready())return;
+ if(dev){log("[I4] Fourth device already entered!");return}
+ if(phase<2){log('<span class="red">[I4] Advance to phase 2 first!</span>');return}
  dev=true;
- log('<span class="gold">[I4] You entered the fourth device early! Nice timing!</span>');
- $("objective").textContent="Fourth device entered. Defeat Goldor!";
+ log('<span class="gold">[I4] Fourth device entered!</span>');
+ $("objective").textContent="Fourth device entered! Defeat Goldor.";
  update();
 }
 function nextPhase(){
- if(check())return;
- phase++;
- if(phase===2){
-  log('[DUNGEON] Goldor phase reached. Fourth device access available!');
-  $("objective").textContent="Enter the fourth device, then defeat Goldor.";
- }else if(phase===3){
-  log('[PARTY] Storm phase cleared. Keep moving!');
- }else if(phase>=4){
-  phase=4;
-  log('[DUNGEON] Final phase. Finish Goldor!');
- }
+ if(!ready())return;
+ phase=Math.min(4,phase+1);
  mana=Math.min(maxMana,mana+60);
+ log("[DUNGEON] Advanced to phase "+phase+". +60 mana.");
+ if(phase>=2)$("objective").textContent="Enter the fourth device and defeat Goldor.";
  update();
 }
 function enemyTurn(){
- if(gameOver||boss<=0)return;
+ if(boss<=0)return;
  let damage=Math.floor(70+Math.random()*100);
  if(dev)damage=Math.floor(damage*.75);
  hp-=damage;
  log('<span class="red">[GOLDOR] You took '+damage+' damage.</span>');
  if(hp<=0){
-  if(bonzo){
-   bonzo=false;hp=Math.floor(maxHp*.5);
-   log('<span class="gold">[BONZO] Bonzo Mask activated! Revived with '+hp+' HP.</span>');
-  }else if(spirit){
-   spirit=false;hp=Math.floor(maxHp*.4);
-   log('<span class="gold">[SPIRIT] Spirit Mask activated! You got back up!</span>');
-  }else if(phoenix){
-   phoenix=false;hp=Math.floor(maxHp*.5);
-   log('<span class="gold">[PHOENIX] Phoenix saved your run!</span>');
-  }
+  if(bonzo){bonzo=false;hp=500;log('<span class="gold">[BONZO] Mask revived you!</span>')}
+  else if(spirit){spirit=false;hp=400;log('<span class="gold">[SPIRIT] Mask revived you!</span>')}
+  else if(phoenix){phoenix=false;hp=500;log('<span class="gold">[PHOENIX] Phoenix saved your run!</span>')}
+  else{hp=0;gameOver=true;$("objective").textContent="You died! Return to the main menu to restart.";log('<span class="red">[DEATH] Run failed!</span>')}
  }
  update();
 }
-function endGame(){
- gameOver=true;
- $("objective").textContent="You died! Restart to try again.";
- log('<span class="red">[DEATH] Dungeon run failed. Restart to retry.</span>');
-}
 function resetGame(){
- hp=maxHp;mana=maxMana;boss=maxBoss;phase=1;dev=false;gameOver=false;
+ hp=maxHp;mana=maxMana;boss=maxBoss;phase=1;dev=false;
+ started=false;gameOver=false;victory=false;
  bonzo=true;spirit=true;phoenix=true;
- $("log").innerHTML="[SYSTEM] New F7 run started.";
- $("objective").textContent="Defeat Goldor and enter the fourth device.";
- log("[GEAR] Goldor armor equipped.");
- log("[ARCHER] Juju Shortbow ready.");
- log("[PET] Level 100 Phoenix equipped.");
+ $("log").textContent="Welcome! Press START GAME to begin your run.";
+ $("objective").textContent="Press START GAME to begin.";
+ $("menu").classList.remove("hidden");
  update();
 }
+$("menu").querySelector(".start").addEventListener("contextmenu",e=>e.preventDefault());
+const menuBox=$("menu").querySelector(".menuBox");
+const restart=document.createElement("button");
+restart.className="wide";
+restart.textContent="🔄 RESTART RUN";
+restart.onclick=resetGame;
+menuBox.appendChild(restart);
 update();
 </script>
 </body>
